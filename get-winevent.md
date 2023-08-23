@@ -469,3 +469,24 @@ PS C:\software> (Get-WinEvent -ListProvider Microsoft-Windows-Security-Auditing)
 6424 此设备的安装在之前被策略禁止后，现已得到允许。...
 6425 网络客户端使用了旧 RPC 方法修改受信任域对象上的身份验证信息。身份验证信息使用了旧加密算法进行加密。请考虑升...
 8191 最高系统-定义的审核消息值。
+
+```
+Get-WinEvent -LogName *PowerShell*, Microsoft-Windows-Kernel-WHEA* |
+Group-Object -Property LevelDisplayName, LogName -NoElement |
+Format-Table -AutoSize
+```
+```
+Get-WinEvent -Path 'C:\Test\PowerShellCore Operational.evtx' -MaxEvents 100
+```
+```
+# Using the Where-Object cmdlet:
+$Yesterday = (Get-Date) - (New-TimeSpan -Day 1)
+Get-WinEvent -LogName 'Windows PowerShell' | Where-Object { $_.TimeCreated -ge $Yesterday }
+# Using the FilterHashtable parameter:
+$Yesterday = (Get-Date) - (New-TimeSpan -Day 1)
+Get-WinEvent -FilterHashtable @{ LogName='Windows PowerShell'; Level=3; StartTime=$Yesterday }
+# Using the FilterXPath parameter:
+$XPath = '*[System[Level=3 and TimeCreated[timediff(@SystemTime) <= 86400000]]]'
+Get-WinEvent -LogName 'Windows PowerShell' -FilterXPath $XPath
+```
+
